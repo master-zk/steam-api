@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/bootstrap/app.php';
+
+try {
+    return (new app\console\Kernel())->run();
+} catch (Exception $e) {
+    exit($e->getMessage().PHP_EOL);
+}

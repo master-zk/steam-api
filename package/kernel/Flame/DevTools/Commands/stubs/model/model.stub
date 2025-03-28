@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace app\model;
+
+use app\foundation\model\CommonModel;
+use think\model\concern\SoftDelete;
+
+class {$className}Model extends CommonModel
+{
+$useSoftDelete
+    /**
+     * 设置表
+     */
+    protected $name = '$tableName';
+$primaryKeyStr
+$createTime
+$deleteTime
+    /**
+     * 设置字段
+     */
+    protected $field = [
+$fieldStr
+    ];
+}

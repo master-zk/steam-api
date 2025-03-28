@@ -1,0 +1,4591 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "携华客服内部接口API文档",
+        "description": "提供内部接口，配置IP白名单可调用",
+        "contact": {
+            "name": "XH Develop Team"
+        },
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "开发环境"
+        }
+    ],
+    "paths": {
+        "/api/internal/file/getOssSign": {
+            "post": {
+                "tags": [
+                    "文件管理"
+                ],
+                "summary": "获取oss附件加签url",
+                "operationId": "5a59377569defc19946721f57ba73601",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FileUrlRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FileUrlResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/internal/sip/recordingUploadCallback": {
+            "get": {
+                "tags": [
+                    "文件管理"
+                ],
+                "summary": "sip端文件上传完毕后回调通知",
+                "operationId": "873b334af114e14ce5106ad48c81ccb0",
+                "parameters": [
+                    {
+                        "name": "call_log_id",
+                        "in": "query",
+                        "description": "通话记录ID, 请求sip上传音频文件时会给到",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "LoginCaptchaRequest": {
+                "required": [
+                    "mobile",
+                    "captcha"
+                ],
+                "properties": {
+                    "mobile": {
+                        "description": "手机号码",
+                        "type": "string",
+                        "example": "13901889999"
+                    }
+                },
+                "type": "object"
+            },
+            "LoginMobileRequest": {
+                "required": [
+                    "mobile",
+                    "captcha"
+                ],
+                "properties": {
+                    "mobile": {
+                        "description": "手机号码",
+                        "type": "string",
+                        "example": "13901889999"
+                    },
+                    "captcha": {
+                        "description": "验证码",
+                        "type": "string",
+                        "example": "1234"
+                    }
+                },
+                "type": "object"
+            },
+            "AuthLoginResponse": {
+                "properties": {
+                    "user_id": {
+                        "description": "用户ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "158585899XX"
+                    },
+                    "name": {
+                        "description": "用户名称",
+                        "type": "string",
+                        "example": "小杜"
+                    },
+                    "jwt": {
+                        "description": "用户JSON Web Token凭证",
+                        "type": "string",
+                        "example": "123456"
+                    }
+                },
+                "type": "object"
+            },
+            "BlacklistCreateRequest": {
+                "required": [
+                    "mobile"
+                ],
+                "properties": {
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "17711110001"
+                    },
+                    "desc": {
+                        "description": "拉黑原因",
+                        "type": "string",
+                        "example": "辱骂客服，态度极其恶劣"
+                    }
+                },
+                "type": "object"
+            },
+            "BlacklistQueryRequest": {
+                "required": [
+                    "keyword"
+                ],
+                "properties": {
+                    "keyword": {
+                        "description": "搜索关键词",
+                        "type": "string",
+                        "example": ""
+                    }
+                },
+                "type": "object"
+            },
+            "CallPoliceContactUpdateRequest": {
+                "required": [
+                    "transfer_number",
+                    "username",
+                    "mobile"
+                ],
+                "properties": {
+                    "transfer_number": {
+                        "description": "公安专线",
+                        "type": "string",
+                        "example": "400110"
+                    },
+                    "username": {
+                        "description": "姓名",
+                        "type": "string",
+                        "example": "张三"
+                    },
+                    "mobile": {
+                        "description": "手机号码",
+                        "type": "string",
+                        "example": "13911112222"
+                    }
+                },
+                "type": "object"
+            },
+            "CallTraceCreateRequest": {
+                "required": [
+                    "mobile",
+                    "name"
+                ],
+                "properties": {
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "17521247726"
+                    },
+                    "name": {
+                        "description": "事件描述",
+                        "type": "string",
+                        "example": "事件描述"
+                    }
+                },
+                "type": "object"
+            },
+            "CallServiceQueryRequest": {
+                "required": [
+                    "mobile"
+                ],
+                "properties": {
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "17521247726"
+                    },
+                    "prev_id": {
+                        "description": "向上翻页时开始ID 默认0",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "next_id": {
+                        "description": "向下翻页时开始ID 默认0",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "begin_date": {
+                        "description": "开始时间",
+                        "type": "string",
+                        "example": "2024-12-09 00:00:00"
+                    },
+                    "end_date": {
+                        "description": "结束时间",
+                        "type": "string",
+                        "example": "2024-12-09 00:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "CallTraceSelectRequest": {
+                "required": [
+                    "mobile"
+                ],
+                "properties": {
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "17521247726"
+                    },
+                    "keyword": {
+                        "description": "关键词",
+                        "type": "string",
+                        "example": "搜索关键词"
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberCallInEvaluationSwitchUpdateRequest": {
+                "required": [
+                    "call_in_evaluation_switch"
+                ],
+                "properties": {
+                    "call_in_evaluation_switch": {
+                        "description": "呼入评价播报开关: 1开启 2关闭",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberCallOutEvaluationSwitchUpdateRequest": {
+                "required": [
+                    "call_out_evaluation_switch"
+                ],
+                "properties": {
+                    "call_out_evaluation_switch": {
+                        "description": "呼出评价播报开关: 1开启 2关闭",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberGroupCreateRequest": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "名称",
+                        "type": "string",
+                        "example": "携华出行"
+                    },
+                    "number_ids": {
+                        "description": "400号码IDS",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberIvrUpdateRequest": {
+                "required": [
+                    "ivr_id"
+                ],
+                "properties": {
+                    "ivr_id": {
+                        "description": "IvrId",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberQueryRequest": {
+                "required": [
+                    "keyword"
+                ],
+                "properties": {
+                    "keyword": {
+                        "description": "搜索关键词",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "group_ids": {
+                        "description": "400分组Ids (未分组传[0])",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 0
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberQueueUpSwitchUpdateRequest": {
+                "required": [
+                    "queue_up_switch"
+                ],
+                "properties": {
+                    "queue_up_switch": {
+                        "description": "排队管理开关: 1开启 2关闭",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "CommonConfigShowRequest": {
+                "required": [
+                    "categories"
+                ],
+                "properties": {
+                    "categories": {
+                        "description": "配置分类: evaluationCallIn=呼入满意度 evaluationCallOut=呼出满意度 queueUp=排队管理 seat=坐席管理",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "evaluationCallIn"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CommonConfigUpdateCategoryRequest": {
+                "required": [
+                    "name",
+                    "fields"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "分类名称",
+                        "type": "string",
+                        "example": "evaluationCallIn"
+                    },
+                    "fields": {
+                        "description": "配置字段",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommonConfigUpdateFieldRequest"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CommonConfigUpdateFieldRequest": {
+                "required": [
+                    "name",
+                    "value"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "配置字段名称",
+                        "type": "string",
+                        "example": "evaluationInviteType"
+                    },
+                    "value": {
+                        "description": "配置字段值",
+                        "type": "string",
+                        "example": "1"
+                    }
+                },
+                "type": "object"
+            },
+            "CommonConfigUpdateRequest": {
+                "required": [
+                    "categories"
+                ],
+                "properties": {
+                    "categories": {
+                        "description": "配置分类",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommonConfigUpdateCategoryRequest"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ExportQueryRequest": {
+                "required": [],
+                "properties": {
+                    "begin_date": {
+                        "description": "开始日期",
+                        "type": "string",
+                        "example": "2024-12-01"
+                    },
+                    "end_date": {
+                        "description": "结束日期",
+                        "type": "string",
+                        "example": "2024-12-31"
+                    },
+                    "export_type": {
+                        "description": "数据来源",
+                        "type": "integer",
+                        "example": "HistoryCall"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeGroupCreateRequest": {
+                "required": [
+                    "pid",
+                    "name"
+                ],
+                "properties": {
+                    "pid": {
+                        "description": "父级ID",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "name": {
+                        "description": "名称",
+                        "type": "string",
+                        "example": "华东客服组"
+                    },
+                    "user_ids": {
+                        "description": "用户IDS",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryAllQueryRequest": {
+                "required": [],
+                "properties": {
+                    "begin_date": {
+                        "description": "开始日期",
+                        "type": "string",
+                        "example": "2024-12-01"
+                    },
+                    "end_date": {
+                        "description": "结束日期",
+                        "type": "string",
+                        "example": "2024-12-31"
+                    },
+                    "transfer_number_ids": {
+                        "description": "400号码 null=无",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "time_type": {
+                        "description": "时间类型：1=小时 2=天",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryCallQueryRequest": {
+                "required": [],
+                "properties": {
+                    "customer_number": {
+                        "description": "号码：手机号/座机号",
+                        "type": "string",
+                        "example": "17522223333/037122223333"
+                    },
+                    "begin_date": {
+                        "description": "开始日期",
+                        "type": "string",
+                        "example": "2024-12-01"
+                    },
+                    "end_date": {
+                        "description": "结束日期",
+                        "type": "string",
+                        "example": "2024-12-31"
+                    },
+                    "call_type": {
+                        "description": "呼入呼出类型：null=无 1=呼入 2=呼出",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "city_ids": {
+                        "description": "城市 null=无",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "group_ids": {
+                        "description": "客服组别 null=无",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "user_ids": {
+                        "description": "客服人员 null=无",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "ivr_item_ids": {
+                        "description": "分流节点 null=无",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "evaluation_value": {
+                        "description": "满意度  null=无 0=未评价 1=满意 2=不满意 3=非常满意",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryIvrQueryRequest": {
+                "required": [],
+                "properties": {
+                    "begin_date": {
+                        "description": "开始日期",
+                        "type": "string",
+                        "example": "2024-12-01"
+                    },
+                    "end_date": {
+                        "description": "结束日期",
+                        "type": "string",
+                        "example": "2024-12-31"
+                    },
+                    "ivr_ids": {
+                        "description": "Ivr null=无",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatQueryRequest": {
+                "required": [],
+                "properties": {
+                    "begin_date": {
+                        "description": "开始日期",
+                        "type": "string",
+                        "example": "2024-12-01"
+                    },
+                    "end_date": {
+                        "description": "结束日期",
+                        "type": "string",
+                        "example": "2024-12-31"
+                    },
+                    "group_ids": {
+                        "description": "客服组别 null=无",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "user_ids": {
+                        "description": "客服人员 null=无",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrCreateRequest": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "IVR名称",
+                        "type": "string",
+                        "example": "华东客服组IVR"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrItemsRequest": {
+                "required": [
+                    "id",
+                    "name",
+                    "desc",
+                    "key",
+                    "action",
+                    "audio_type",
+                    "origin_txt_url",
+                    "audio_url",
+                    "group_id",
+                    "child"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "节点ID (新增时传0)",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "name": {
+                        "description": "导航名称",
+                        "type": "string",
+                        "example": "语音欢迎导航"
+                    },
+                    "desc": {
+                        "description": "导航介绍",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "key": {
+                        "description": "导航按键 (顶级节点传`#`)",
+                        "type": "string",
+                        "example": "#"
+                    },
+                    "action": {
+                        "description": "导航动作: 1=选择下一级导航 2=分配到组 3=返回上一级菜单 4=重听",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "audio_type": {
+                        "description": "语音文件类型：0=无 1=文本转语音 2=直接上传音频",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "origin_txt_url": {
+                        "description": "文本地址",
+                        "type": "string",
+                        "example": "/kefu/audio_txt/20241101/df986yku98u8.txt"
+                    },
+                    "audio_url": {
+                        "description": "语音地址",
+                        "type": "string",
+                        "example": "/kefu/audi/20241101/df986yku98u8.avi"
+                    },
+                    "group_id": {
+                        "description": "分配到的组ID",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "child": {
+                        "description": "子节点",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeIvrItemsRequest"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrQueryRequest": {
+                "required": [],
+                "properties": {
+                    "keyword": {
+                        "description": "搜索词",
+                        "type": "string",
+                        "example": "张三"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrStatusUpdateRequest": {
+                "required": [
+                    "status"
+                ],
+                "properties": {
+                    "status": {
+                        "description": "状态: 1=启用 2禁用",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrUpdateRequest": {
+                "required": [
+                    "name",
+                    "item"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "IVR名称",
+                        "type": "string",
+                        "example": "华东客服组IVR"
+                    },
+                    "item": {
+                        "$ref": "#/components/schemas/EmployeeIvrItemsRequest"
+                    }
+                },
+                "type": "object"
+            },
+            "RealtimeIndexRequest": {
+                "required": [],
+                "properties": {
+                    "transfer_number_id": {
+                        "description": "400Id",
+                        "type": "integer",
+                        "example": 0
+                    }
+                },
+                "type": "object"
+            },
+            "RealtimeSeatQueryUserRequest": {
+                "required": [],
+                "properties": {
+                    "keyword": {
+                        "description": "搜索关键词",
+                        "type": "string",
+                        "example": "张三"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeRoleCreateRequest": {
+                "required": [
+                    "name",
+                    "description",
+                    "permission_ids"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "名称",
+                        "type": "string",
+                        "example": "admin"
+                    },
+                    "description": {
+                        "description": "描述",
+                        "type": "string",
+                        "example": "管理员"
+                    },
+                    "permission_ids": {
+                        "description": "权限",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeRoleQueryRequest": {
+                "required": [],
+                "properties": {
+                    "role_ids": {
+                        "description": "角色IDS",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserCreateRequest": {
+                "required": [
+                    "name",
+                    "nickname",
+                    "mobile",
+                    "on_hook_status",
+                    "role_ids"
+                ],
+                "properties": {
+                    "mobile": {
+                        "description": "手机号码",
+                        "type": "string",
+                        "example": "13901889999"
+                    },
+                    "name": {
+                        "description": "姓名",
+                        "type": "string",
+                        "example": "张三"
+                    },
+                    "nickname": {
+                        "description": "昵称",
+                        "type": "string",
+                        "example": "法外狂徒"
+                    },
+                    "on_hook_status": {
+                        "description": "挂机状态: 1自动示闲 2自动挂起",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "role_ids": {
+                        "description": "角色IDS",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "group_ids": {
+                        "description": "分组IDS",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserQueryRequest": {
+                "required": [],
+                "properties": {
+                    "keyword": {
+                        "description": "搜索词",
+                        "type": "string",
+                        "example": "张三"
+                    },
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "张三"
+                    },
+                    "role_ids": {
+                        "description": "角色IDS",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "group_ids": {
+                        "description": "分组IDS (未分组传[0])",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "user_ids": {
+                        "description": "用户IDS",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserStatusUpdateRequest": {
+                "required": [
+                    "status"
+                ],
+                "properties": {
+                    "status": {
+                        "description": "状态: 1=启用 2禁用",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "VipCreateRequest": {
+                "required": [
+                    "mobile"
+                ],
+                "properties": {
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "17711110001"
+                    },
+                    "desc": {
+                        "description": "描述",
+                        "type": "string",
+                        "example": ""
+                    }
+                },
+                "type": "object"
+            },
+            "VipImportRequest": {
+                "required": [
+                    "file"
+                ],
+                "properties": {
+                    "file": {
+                        "description": "文件",
+                        "type": "file",
+                        "format": "binary"
+                    }
+                },
+                "type": "object"
+            },
+            "VipMultiDeleteRequest": {
+                "required": [
+                    "ids"
+                ],
+                "properties": {
+                    "ids": {
+                        "description": "Ids",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "VipQueryRequest": {
+                "required": [
+                    "keyword"
+                ],
+                "properties": {
+                    "keyword": {
+                        "description": "搜索关键词",
+                        "type": "string",
+                        "example": ""
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchCallOptionRequest": {
+                "required": [
+                    "call_number",
+                    "call_type"
+                ],
+                "properties": {
+                    "call_number": {
+                        "description": "通话号码",
+                        "type": "string",
+                        "example": "18805699558"
+                    },
+                    "call_type": {
+                        "description": "呼叫类型：1=呼入 2=呼出",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchGetReportSignRequest": {
+                "required": [
+                    "type"
+                ],
+                "properties": {
+                    "type": {
+                        "description": "报告事件类型: online=账号上线、offline=账号离线、waiting=示闲、running=示忙、idle=挂起",
+                        "type": "integer",
+                        "example": "waiting"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchInteractQueryRequest": {
+                "required": [
+                    "mobile"
+                ],
+                "properties": {
+                    "begin_date": {
+                        "description": "开始时间",
+                        "type": "string",
+                        "example": "2024-12-09 00:00:00"
+                    },
+                    "end_date": {
+                        "description": "结束时间",
+                        "type": "string",
+                        "example": "2024-12-09 00:00:00"
+                    },
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "175"
+                    },
+                    "prev_id": {
+                        "description": "向上翻页时开始ID 默认0",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "next_id": {
+                        "description": "向下翻页时开始ID 默认0",
+                        "type": "integer",
+                        "example": 0
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchInteractRequest": {
+                "required": [
+                    "mobile",
+                    "content",
+                    "call_trace_id",
+                    "call_trace_status"
+                ],
+                "properties": {
+                    "call_trace_id": {
+                        "description": "服务ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_trace_status": {
+                        "description": "追踪事件跟进状态 1=待跟进 2=跟进中 3=已完结",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "17500001111"
+                    },
+                    "content": {
+                        "description": "记录内容",
+                        "type": "string",
+                        "example": "客户反馈没有开发票"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchOnHookStatusUpdateRequest": {
+                "required": [
+                    "on_hook_status"
+                ],
+                "properties": {
+                    "on_hook_status": {
+                        "description": "挂机状态: 1自动示闲 2自动挂起",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchQueryRequest": {
+                "required": [
+                    "mobile"
+                ],
+                "properties": {
+                    "begin_date": {
+                        "description": "开始时间",
+                        "type": "string",
+                        "example": "2024-12-09"
+                    },
+                    "end_date": {
+                        "description": "结束时间",
+                        "type": "string",
+                        "example": "2024-12-09"
+                    },
+                    "mobile": {
+                        "description": "号码",
+                        "type": "string",
+                        "example": "175"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchReportStatusRequest": {
+                "required": [
+                    "status",
+                    "timestamp",
+                    "last_status",
+                    "last_timestamp",
+                    "type"
+                ],
+                "properties": {
+                    "status": {
+                        "description": "状态：2=离线 3=示闲 4=示忙 5=挂起",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "timestamp": {
+                        "description": "上报时间 （秒级时间戳）",
+                        "type": "integer",
+                        "example": 1735281530
+                    },
+                    "last_status": {
+                        "description": "上次状态：0=无 2=离线 3=示闲 4=示忙 5=挂起",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_timestamp": {
+                        "description": "上次上报时间 （秒级时间戳） 首次上报传0",
+                        "type": "integer",
+                        "example": 1735281535
+                    },
+                    "type": {
+                        "description": "上报类型: 1=事件上报 2=定时上报",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchReportUserStatusRequest": {
+                "required": [
+                    "status",
+                    "last_status_at"
+                ],
+                "properties": {
+                    "status": {
+                        "description": "状态：2=离线 3=示闲 4=示忙 5=挂起",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_status_at": {
+                        "description": "上次上报时间 （秒） 首次上报传0",
+                        "type": "integer",
+                        "example": 1735281535
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchStatusUpdateRequest": {
+                "required": [
+                    "status"
+                ],
+                "properties": {
+                    "status": {
+                        "description": "通话状态: 1示闲 2示忙 3挂起",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchSyncCallLogRequest": {
+                "required": [
+                    "call_type",
+                    "uuid"
+                ],
+                "properties": {
+                    "call_type": {
+                        "description": "呼叫类型: 1=呼入 2=呼出",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "uuid": {
+                        "description": "通话唯一标识",
+                        "type": "string",
+                        "example": "8d629d81-a984-4b95-babb-a17f519a965f"
+                    }
+                },
+                "type": "object"
+            },
+            "BlacklistIsVipResponse": {
+                "properties": {
+                    "status": {
+                        "description": "是否是Vip: 1是 2否",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "BlacklistQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "13800001111"
+                    },
+                    "desc": {
+                        "description": "拉黑原因",
+                        "type": "string",
+                        "example": "辱骂客服"
+                    },
+                    "creator_id": {
+                        "description": "创建人Id",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "creator_name": {
+                        "description": "创建人姓名",
+                        "type": "string",
+                        "example": "张三"
+                    },
+                    "created_time": {
+                        "description": "拉黑时间",
+                        "type": "string",
+                        "example": "2024-11-01 00:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "BlacklistQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BlacklistQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallTraceMobileSelectResponse": {
+                "properties": {
+                    "id": {
+                        "description": "服务ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "description": "跟进状态: 1=待跟进 2=跟进中 3=已完结",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "追踪事件名称",
+                        "type": "string",
+                        "example": "20250101 测试"
+                    },
+                    "created_time": {
+                        "description": "追踪事件创建时间",
+                        "type": "string",
+                        "example": "2025-01-01 01:01:01"
+                    }
+                },
+                "type": "object"
+            },
+            "CallTraceQueryItemInteractResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "description": "客服Id",
+                        "type": "integer"
+                    },
+                    "user_name": {
+                        "description": "客服名称",
+                        "type": "string"
+                    },
+                    "call_trace_id": {
+                        "description": "追踪事件ID",
+                        "type": "integer"
+                    },
+                    "call_trace_status": {
+                        "description": "追踪事件跟进状态: 1=待跟进 2=跟进中 3=已完结",
+                        "type": "integer"
+                    },
+                    "content": {
+                        "description": "沟通内容",
+                        "type": "string"
+                    },
+                    "created_time": {
+                        "description": "创建时间",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "CallTraceQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "通话追踪事件ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "通话追踪事件名称",
+                        "type": "string",
+                        "example": "订单问题"
+                    },
+                    "status": {
+                        "description": "通话追踪事件跟进状态: 0=无 1=待跟进 2=跟进中 3=已完结",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "create_time": {
+                        "description": "通话追踪事件创建时间",
+                        "type": "integer",
+                        "example": "202501-01 10:00:01"
+                    },
+                    "interact": {
+                        "description": "沟通记录",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CallTraceQueryItemInteractResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallTraceQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CallTraceQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberGroupSelectItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "400名称",
+                        "type": "string",
+                        "example": "携华出行"
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberGroupShowResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "分组名称",
+                        "type": "string",
+                        "example": "华东客服"
+                    },
+                    "number_ids": {
+                        "description": "400号码Ids",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberGroupTreeWithCountGroupItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "400分组ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "400分组名称",
+                        "type": "string",
+                        "example": "华东客服组"
+                    },
+                    "count": {
+                        "description": "400号码统计",
+                        "type": "integer",
+                        "example": 3
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberGroupTreeWithCountResponse": {
+                "properties": {
+                    "total": {
+                        "description": "所有统计",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "no_group": {
+                        "description": "未分组统计",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "group": {
+                        "description": "已分组的数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CallTransferNumberGroupTreeWithCountGroupItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberGroupUpdateOptionResponse": {
+                "properties": {
+                    "transfer_number": {
+                        "description": "400号码",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CallTransferNumberSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "number": {
+                        "description": "400号码",
+                        "type": "string",
+                        "example": "400100001"
+                    },
+                    "group_name": {
+                        "description": "400名称",
+                        "type": "string",
+                        "example": "携华出行"
+                    },
+                    "ivr_id": {
+                        "description": "IvrId",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_in_evaluation_switch": {
+                        "description": "呼入评价播报开关：1=开 2=关",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_out_evaluation_switch": {
+                        "description": "呼出评价播报：1=开 2=关",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "queue_up_switch": {
+                        "description": "排队管理：1=开 2=关",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberQueryOptionResponse": {
+                "properties": {
+                    "ivr": {
+                        "description": "ivr",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeIvrSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CallTransferNumberQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallTransferNumberSelectItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "number": {
+                        "description": "400号码",
+                        "type": "string",
+                        "example": "400100001"
+                    }
+                },
+                "type": "object"
+            },
+            "ConfigCategoryShowResponse": {
+                "properties": {
+                    "name": {
+                        "description": "分类名称",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "label": {
+                        "description": "分类标签",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "desc": {
+                        "description": "分类描述",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "fields": {
+                        "description": "配置项",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ConfigFieldShowResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ConfigFieldShowResponse": {
+                "properties": {
+                    "name": {
+                        "description": "配置项名称",
+                        "type": "string",
+                        "example": "evaluationInviteType"
+                    },
+                    "label": {
+                        "description": "配置项标签",
+                        "type": "string",
+                        "example": "邀评规则"
+                    },
+                    "value": {
+                        "description": "配置项值",
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "prompt": {
+                        "description": "配置项提示词",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "desc": {
+                        "description": "配置项描述",
+                        "type": "string",
+                        "example": ""
+                    }
+                },
+                "type": "object"
+            },
+            "ExportQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "export_type": {
+                        "description": "导出任务类型：HistoryCall...",
+                        "type": "string"
+                    },
+                    "run_status": {
+                        "description": "执行状态：0=无 1=待执行 2=执行中 3=执行失败 4=执行成功",
+                        "type": "integer"
+                    },
+                    "oss_file_url": {
+                        "description": "语音文件oss路径",
+                        "type": "string"
+                    },
+                    "created_time": {
+                        "description": "创建时间",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ExportQueryOptionResponse": {
+                "properties": {
+                    "export_type": {
+                        "description": "数据类型",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OptionResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ExportQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ExportQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeGroupSelectItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "分组ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "分组名称",
+                        "type": "string",
+                        "example": "华东客服1组"
+                    },
+                    "pid": {
+                        "description": "父级ID",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "level": {
+                        "description": "层级",
+                        "type": "integer",
+                        "example": 2
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeGroupShowResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "pid": {
+                        "description": "父级ID",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "name": {
+                        "description": "分组名称",
+                        "type": "string",
+                        "example": "华东客服"
+                    },
+                    "parent_name": {
+                        "description": "父级分组名称",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "description": {
+                        "description": "分组描述",
+                        "type": "string",
+                        "example": "管理员"
+                    },
+                    "user_ids": {
+                        "description": "用户Ids",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeGroupTreeWithCountGroupItemChildResponse": {
+                "properties": {
+                    "id": {
+                        "description": "分组ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "分组名称",
+                        "type": "string",
+                        "example": "华东客服组"
+                    },
+                    "count": {
+                        "description": "用户统计",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "child": {
+                        "description": "子分组",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": []
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeGroupTreeWithCountGroupItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "分组ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "分组名称",
+                        "type": "string",
+                        "example": "华东客服组"
+                    },
+                    "count": {
+                        "description": "用户统计",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "child": {
+                        "description": "子分组",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeGroupTreeWithCountGroupItemChildResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeGroupTreeWithCountResponse": {
+                "properties": {
+                    "total": {
+                        "description": "所有人统计",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "no_group": {
+                        "description": "未分组统计",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "group": {
+                        "description": "已分组的数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeGroupTreeWithCountGroupItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeGroupUpdateOptionResponse": {
+                "properties": {
+                    "user": {
+                        "description": "用户",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeUserSelectItemResponse"
+                        }
+                    },
+                    "group": {
+                        "description": "分组",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeGroupSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryAllCallInQueryItemResponse": {
+                "properties": {
+                    "time_alias": {
+                        "description": "时间段别名",
+                        "type": "string"
+                    },
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_queue_duration": {
+                        "description": "总排队时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_queue_duration_avg": {
+                        "description": "平均排队时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_evaluation_rate": {
+                        "description": "参评率",
+                        "type": "string"
+                    },
+                    "call_evaluation_satisfied_rate": {
+                        "description": "满意率",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryAllCallInQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistoryAllCallInQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryAllCallInSumStatResponse": {
+                "properties": {
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_queue_duration": {
+                        "description": "总排队时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_queue_duration_avg": {
+                        "description": "平均排队时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_evaluation_rate": {
+                        "description": "参评率",
+                        "type": "string"
+                    },
+                    "call_evaluation_satisfied_rate": {
+                        "description": "满意率",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryAllCallOutQueryItemResponse": {
+                "properties": {
+                    "time_alias": {
+                        "description": "时间段别名",
+                        "type": "string"
+                    },
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryAllCallOutQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistoryAllCallOutQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryAllCallOutSumStatResponse": {
+                "properties": {
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryAllQueryOptionResponse": {
+                "properties": {
+                    "transfer_number": {
+                        "description": "400号码",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CallTransferNumberSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryCallQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "call_type": {
+                        "description": "呼叫类型：0=未知 1=呼入 2=呼出",
+                        "type": "integer"
+                    },
+                    "customer_number": {
+                        "description": "手机号 (呼入时-主叫号码, 呼出时-被叫号码)",
+                        "type": "string"
+                    },
+                    "is_vip": {
+                        "description": "是否是vip 1=是 2=否",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "transfer_number_id": {
+                        "description": "400号码ID",
+                        "type": "integer"
+                    },
+                    "transfer_number": {
+                        "description": "400号码 (呼入时-被叫号码, 呼出时-主叫号码)",
+                        "type": "string"
+                    },
+                    "transfer_number_group_name": {
+                        "description": "400号码分组名称",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "客服Id",
+                        "type": "integer"
+                    },
+                    "user_name": {
+                        "description": "客服名称",
+                        "type": "string"
+                    },
+                    "ivr_id": {
+                        "description": "IvrID",
+                        "type": "integer"
+                    },
+                    "ivr_item_id": {
+                        "description": "Ivr分流节点ID",
+                        "type": "integer"
+                    },
+                    "ivr_item_name": {
+                        "description": "Ivr分流节点名称",
+                        "type": "string"
+                    },
+                    "ivr_group_id": {
+                        "description": "I分流客服组别Id",
+                        "type": "integer"
+                    },
+                    "ivr_group_name": {
+                        "description": "分流客服组别名称",
+                        "type": "string"
+                    },
+                    "start_stamp": {
+                        "description": "通话开始时间",
+                        "type": "string",
+                        "example": "2025-01-01 00:00:00"
+                    },
+                    "answer_stamp": {
+                        "description": "接起时间",
+                        "type": "string",
+                        "example": null
+                    },
+                    "end_stamp": {
+                        "description": "挂断时间",
+                        "type": "string"
+                    },
+                    "evaluation_status": {
+                        "description": "评价状态: 1=已评价 2=未评价",
+                        "type": "integer"
+                    },
+                    "evaluation_value": {
+                        "description": "评价 0=无评价数据 1=满意 2=不满意 3=非常满意",
+                        "type": "integer"
+                    },
+                    "end_type": {
+                        "description": "挂断方: 0=无 1=客服挂断 2=用户挂断",
+                        "type": "integer"
+                    },
+                    "duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "wait_duration": {
+                        "description": "等待时长（秒）",
+                        "type": "integer"
+                    },
+                    "queue_duration": {
+                        "description": "排队时长（秒）",
+                        "type": "integer"
+                    },
+                    "audio_file_status": {
+                        "description": "语音文件状态：0=无文件 1=上传完成 2=上传中 3=上传失败",
+                        "type": "integer"
+                    },
+                    "audio_file_url": {
+                        "description": "语音文件oss路径",
+                        "type": "string"
+                    },
+                    "city_name": {
+                        "description": "号码归属地",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryCallQueryOptionResponse": {
+                "properties": {
+                    "call_type": {
+                        "description": "呼入呼出类型",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OptionResponse"
+                        }
+                    },
+                    "city": {
+                        "description": "城市",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OptionResponse"
+                        }
+                    },
+                    "ivr_group": {
+                        "description": "客服组别",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeGroupSelectItemResponse"
+                        }
+                    },
+                    "user": {
+                        "description": "客服人员",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeUserSelectItemResponse"
+                        }
+                    },
+                    "evaluation_value": {
+                        "description": "满意度",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OptionResponse"
+                        }
+                    },
+                    "ivr_item": {
+                        "description": "分流节点",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeIvrItemSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryCallQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistoryCallQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryIvrItemQueryItemResponse": {
+                "properties": {
+                    "time_alias": {
+                        "description": "时间段别名",
+                        "type": "string"
+                    },
+                    "ivr_name": {
+                        "description": "Ivr名称",
+                        "type": "string"
+                    },
+                    "ivr_item_name": {
+                        "description": "Ivr节点名称",
+                        "type": "string"
+                    },
+                    "group_name": {
+                        "description": "客服组别",
+                        "type": "string"
+                    },
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_queue_num": {
+                        "description": "排队量",
+                        "type": "integer"
+                    },
+                    "call_queue_abandon_num": {
+                        "description": "排队放弃量",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryIvrItemQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistoryIvrItemQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryIvrItemSumStatResponse": {
+                "properties": {
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_queue_num": {
+                        "description": "排队量",
+                        "type": "integer"
+                    },
+                    "call_queue_abandon_num": {
+                        "description": "排队放弃量",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryIvrQueryItemResponse": {
+                "properties": {
+                    "time_alias": {
+                        "description": "时间段别名",
+                        "type": "string"
+                    },
+                    "ivr_name": {
+                        "description": "Ivr名称",
+                        "type": "string"
+                    },
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_queue_num": {
+                        "description": "排队量",
+                        "type": "integer"
+                    },
+                    "call_queue_abandon_num": {
+                        "description": "排队放弃量",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryIvrQueryOptionResponse": {
+                "properties": {
+                    "ivr": {
+                        "description": "ivr",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeIvrSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryIvrQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistoryIvrQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistoryIvrSumStatResponse": {
+                "properties": {
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_queue_num": {
+                        "description": "排队量",
+                        "type": "integer"
+                    },
+                    "call_queue_abandon_num": {
+                        "description": "排队放弃量",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatCallInQueryItemResponse": {
+                "properties": {
+                    "time_alias": {
+                        "description": "时间段别名",
+                        "type": "string"
+                    },
+                    "user_name": {
+                        "description": "用户名",
+                        "type": "string"
+                    },
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_is_evaluation_num": {
+                        "description": "邀评量",
+                        "type": "integer"
+                    },
+                    "call_is_evaluation_rate": {
+                        "description": "邀评率",
+                        "type": "string"
+                    },
+                    "call_evaluation_num": {
+                        "description": "参评量",
+                        "type": "integer"
+                    },
+                    "call_evaluation_rate": {
+                        "description": "参评率",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "call_evaluation_satisfied_rate": {
+                        "description": "满意率",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatCallInQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistorySeatCallInQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatCallInSumStatResponse": {
+                "properties": {
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_is_evaluation_num": {
+                        "description": "邀评量",
+                        "type": "integer"
+                    },
+                    "call_is_evaluation_rate": {
+                        "description": "邀评率",
+                        "type": "string"
+                    },
+                    "call_evaluation_num": {
+                        "description": "参评量",
+                        "type": "integer"
+                    },
+                    "call_evaluation_rate": {
+                        "description": "参评率",
+                        "type": "string"
+                    },
+                    "call_evaluation_satisfied_rate": {
+                        "description": "满意率",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatCallOutQueryItemResponse": {
+                "properties": {
+                    "time_alias": {
+                        "description": "时间段别名",
+                        "type": "string"
+                    },
+                    "user_name": {
+                        "description": "用户名",
+                        "type": "string"
+                    },
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_is_evaluation_num": {
+                        "description": "邀评量",
+                        "type": "integer"
+                    },
+                    "call_is_evaluation_rate": {
+                        "description": "邀评率",
+                        "type": "string"
+                    },
+                    "call_evaluation_num": {
+                        "description": "参评量",
+                        "type": "integer"
+                    },
+                    "call_evaluation_rate": {
+                        "description": "参评率",
+                        "type": "string"
+                    },
+                    "call_evaluation_satisfied_rate": {
+                        "description": "满意率",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatCallOutQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistorySeatCallOutQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatCallOutSumStatResponse": {
+                "properties": {
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer"
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer"
+                    },
+                    "call_answer_rate": {
+                        "description": "接通率",
+                        "type": "string"
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration": {
+                        "description": "总等待时长(秒)",
+                        "type": "integer"
+                    },
+                    "call_wait_duration_avg": {
+                        "description": "平均等待时长秒(秒)",
+                        "type": "integer"
+                    },
+                    "call_is_evaluation_num": {
+                        "description": "邀评量",
+                        "type": "integer"
+                    },
+                    "call_is_evaluation_rate": {
+                        "description": "邀评率",
+                        "type": "string"
+                    },
+                    "call_evaluation_num": {
+                        "description": "参评量",
+                        "type": "integer"
+                    },
+                    "call_evaluation_rate": {
+                        "description": "参评率",
+                        "type": "string"
+                    },
+                    "call_evaluation_satisfied_rate": {
+                        "description": "满意率",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatEfficiencyQueryItemResponse": {
+                "properties": {
+                    "day": {
+                        "description": "日期",
+                        "type": "string"
+                    },
+                    "user_name": {
+                        "description": "用户名",
+                        "type": "string"
+                    },
+                    "online": {
+                        "description": "在线时长（秒）",
+                        "type": "integer"
+                    },
+                    "offline": {
+                        "description": "离线时长（秒）",
+                        "type": "integer"
+                    },
+                    "idle": {
+                        "description": "示闲时长（秒）",
+                        "type": "integer"
+                    },
+                    "busy": {
+                        "description": "示忙时长（秒）",
+                        "type": "integer"
+                    },
+                    "on_hook": {
+                        "description": "挂起时长（秒）",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatEfficiencyQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HistorySeatEfficiencyQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatEfficiencySumStatResponse": {
+                "properties": {
+                    "online": {
+                        "description": "在线时长（秒）",
+                        "type": "integer"
+                    },
+                    "offline": {
+                        "description": "离线时长（秒）",
+                        "type": "integer"
+                    },
+                    "idle": {
+                        "description": "示闲时长（秒）",
+                        "type": "integer"
+                    },
+                    "busy": {
+                        "description": "示忙时长（秒）",
+                        "type": "integer"
+                    },
+                    "on_hook": {
+                        "description": "挂起时长（秒）",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "HistorySeatQueryOptionResponse": {
+                "properties": {
+                    "ivr_group": {
+                        "description": "客服组别",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeGroupSelectItemResponse"
+                        }
+                    },
+                    "user": {
+                        "description": "客服人员",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeUserSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "ivr_id": {
+                        "description": "IvrId",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "pid": {
+                        "description": "父级ID",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "name": {
+                        "description": "导航名称",
+                        "type": "string",
+                        "example": "语音欢迎导航"
+                    },
+                    "desc": {
+                        "description": "导航介绍",
+                        "type": "string",
+                        "example": "无"
+                    },
+                    "key": {
+                        "description": "导航按键",
+                        "type": "string",
+                        "example": "#"
+                    },
+                    "action": {
+                        "description": "导航动作: 1=选择下一级导航 2=分配到组 3=返回上一级菜单 4=重听",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "origin_txt_url": {
+                        "description": "导航文本地址",
+                        "type": "string",
+                        "example": "/kefu/audio/20241101/222.txt"
+                    },
+                    "audio_url": {
+                        "description": "导航语音地址",
+                        "type": "string",
+                        "example": "/kefu/audio/20241101/222.avi"
+                    },
+                    "audio_type": {
+                        "description": "语音文件类型：1=文本转语音 2=直接上传",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "group_id": {
+                        "description": "分配到的组ID",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "level": {
+                        "description": "层级: 1,2,3...",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "child": {
+                        "description": "IVR子节点",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeIvrItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrItemSelectItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "IvrId",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Ivr节点名称",
+                        "type": "string",
+                        "example": "节点1"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Ivr名称",
+                        "type": "string",
+                        "example": "携华出行Ivr"
+                    },
+                    "creator_name": {
+                        "description": "创建人姓名",
+                        "type": "string",
+                        "example": "张三"
+                    },
+                    "created_time": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "2024-01-01 00:00:00"
+                    },
+                    "status": {
+                        "description": "状态: 1=开启 2=禁用",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeIvrQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrRealtimeChartItemResponse": {
+                "properties": {
+                    "timestamp": {
+                        "description": "秒时间戳",
+                        "type": "integer",
+                        "example": 1741795200
+                    },
+                    "point": {
+                        "description": "时间节点",
+                        "type": "string",
+                        "example": "00:00"
+                    },
+                    "call_num": {
+                        "description": "通话量",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "call_answer_num": {
+                        "description": "接通量",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "call_queue_num": {
+                        "description": "排队量",
+                        "type": "integer",
+                        "example": 0
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrRealtimeResponse": {
+                "properties": {
+                    "id": {
+                        "description": "IvrId",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Ivr名称",
+                        "type": "string",
+                        "example": "语音欢迎导航"
+                    },
+                    "chart": {
+                        "description": "折线图",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeIvrRealtimeChartItemResponse"
+                        }
+                    },
+                    "child": {
+                        "description": "IVR节点数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeIvrRealtimeResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrSelectItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "IvrId",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Ivr名称",
+                        "type": "string",
+                        "example": "携华出行ivr"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrShowResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "ivr名称",
+                        "type": "string",
+                        "example": "华东客服IVR"
+                    },
+                    "item": {
+                        "description": "IVR节点",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeIvrItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeIvrUpdateOptionResponse": {
+                "properties": {
+                    "group": {
+                        "description": "分组",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeGroupSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeePermissionListItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "parent_id": {
+                        "description": "父级ID",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "name": {
+                        "description": "名称",
+                        "type": "string",
+                        "example": "账号管理"
+                    },
+                    "rule": {
+                        "description": "路径",
+                        "type": "string",
+                        "example": "manager-center/account"
+                    },
+                    "menu": {
+                        "description": "是否是菜单: 1=是 2=否",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeePermissionTreeItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "parent_id": {
+                        "description": "父级ID",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "name": {
+                        "description": "名称",
+                        "type": "string",
+                        "example": "账号管理"
+                    },
+                    "rule": {
+                        "description": "路径",
+                        "type": "string",
+                        "example": "manager-center/account"
+                    },
+                    "menu": {
+                        "description": "是否是菜单: 1=是 2=否",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "child": {
+                        "description": "子节点",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeePermissionTreeItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallPoliceShowContactItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "Id",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "username": {
+                        "description": "姓名",
+                        "type": "string",
+                        "example": "王五"
+                    },
+                    "mobile": {
+                        "description": "手机号码",
+                        "type": "string",
+                        "example": "15900001111"
+                    }
+                },
+                "type": "object"
+            },
+            "CallPoliceShowItemResponse": {
+                "properties": {
+                    "call_in_number": {
+                        "description": "呼入号码",
+                        "type": "string",
+                        "example": "15941264712"
+                    },
+                    "transfer_number": {
+                        "description": "400号码",
+                        "type": "string",
+                        "example": "40099990110"
+                    },
+                    "contacts": {
+                        "description": "紧急联系人",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CallPoliceShowContactItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CallPoliceShowResponse": {
+                "properties": {
+                    "items": {
+                        "description": "配置项",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CallPoliceShowItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "RealtimeIndexChartItemResponse": {
+                "properties": {
+                    "timestamp": {
+                        "description": "秒时间戳",
+                        "type": "integer",
+                        "example": 1741795200
+                    },
+                    "point": {
+                        "description": "时间节点",
+                        "type": "string",
+                        "example": "00:00"
+                    },
+                    "call_num": {
+                        "description": "话务量",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "call_in_num": {
+                        "description": "呼入量",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "call_out_num": {
+                        "description": "呼出量",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "call_queue_num": {
+                        "description": "排队量",
+                        "type": "integer",
+                        "example": 0
+                    }
+                },
+                "type": "object"
+            },
+            "RealtimeIndexDetailResponse": {
+                "properties": {
+                    "call_num": {
+                        "description": "话务量",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "call_in_num": {
+                        "description": "呼入量",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "call_out_num": {
+                        "description": "呼出量",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "call_in_queue_num": {
+                        "description": "呼入-当前排队量",
+                        "type": "number",
+                        "format": "float",
+                        "example": 1
+                    },
+                    "call_in_queue_duration_avg": {
+                        "description": "呼入-平均排队时长",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "call_in_answer_num": {
+                        "description": "呼入-正在通话量",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "call_in_log_answer_duration_avg": {
+                        "description": "呼入-平均呼入时长",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "call_in_log_answer_num": {
+                        "description": "呼入-呼入接通量",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "call_in_log_answer_rate": {
+                        "description": "呼入-接起率",
+                        "type": "number",
+                        "format": "float",
+                        "example": 2.1
+                    },
+                    "call_out_answer_num": {
+                        "description": "呼出-当前通话量",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_out_log_answer_num": {
+                        "description": "呼出-呼出接通量",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_out_log_answer_duration_avg": {
+                        "description": "平均呼出时长",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "RealtimeIndexEvaluationResponse": {
+                "properties": {
+                    "call_is_evaluation_num": {
+                        "description": "邀评量",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "call_is_evaluation_rate": {
+                        "description": "邀评率",
+                        "type": "number",
+                        "format": "float",
+                        "example": 70
+                    },
+                    "call_evaluation_num": {
+                        "description": "参评量",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "call_evaluation_rate": {
+                        "description": "参评率",
+                        "type": "number",
+                        "format": "float",
+                        "example": 0.1
+                    },
+                    "call_evaluation_satisfied_num": {
+                        "description": "满意量",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_evaluation_unsatisfied_num": {
+                        "description": "不满意量",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_not_evaluation_num": {
+                        "description": "未评价量",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_evaluation_satisfied_rate": {
+                        "description": "满意率",
+                        "type": "number",
+                        "format": "float",
+                        "example": 0.1
+                    }
+                },
+                "type": "object"
+            },
+            "RealtimeIndexOptionResponse": {
+                "properties": {
+                    "transfer_number": {
+                        "description": "400号码",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CallTransferNumberSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "RealtimeIndexResponse": {
+                "properties": {
+                    "detail": {
+                        "$ref": "#/components/schemas/RealtimeIndexDetailResponse"
+                    },
+                    "chart": {
+                        "description": "折线图",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RealtimeIndexChartItemResponse"
+                        }
+                    },
+                    "evaluation": {
+                        "$ref": "#/components/schemas/RealtimeIndexEvaluationResponse"
+                    }
+                },
+                "type": "object"
+            },
+            "RealtimeSeatQueryUserItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "用户ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "用户姓名",
+                        "type": "string",
+                        "example": "张三"
+                    },
+                    "online": {
+                        "description": "在线时长（秒）",
+                        "type": "integer",
+                        "example": 1000
+                    },
+                    "idle": {
+                        "description": "示闲时长（秒）",
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "busy": {
+                        "description": "示忙时长（秒）",
+                        "type": "integer",
+                        "example": 700
+                    },
+                    "on_hook": {
+                        "description": "挂起时长（秒）",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "offline": {
+                        "description": "离线时长（秒）",
+                        "type": "integer",
+                        "example": 85400
+                    },
+                    "status": {
+                        "description": "当前状态： 1=在线 2=离线",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_answer_num": {
+                        "description": "接听量",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_answer_rate": {
+                        "description": "接起率",
+                        "type": "number",
+                        "format": "float",
+                        "example": 0
+                    },
+                    "call_answer_duration": {
+                        "description": "通话时长（秒）",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_answer_duration_avg": {
+                        "description": "平均通话时长（秒）",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "call_evaluation_satisfied_rate": {
+                        "description": "满意率",
+                        "type": "number",
+                        "format": "float",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "RealtimeSeatQueryUserResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RealtimeSeatQueryUserItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "RealtimeUserStatusRatioResponse": {
+                "properties": {
+                    "all": {
+                        "description": "总人数",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "online": {
+                        "description": "在线人数",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "idle": {
+                        "description": "示闲人数",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "busy": {
+                        "description": "示忙人数",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "on_hook": {
+                        "description": "挂起人数",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "offline": {
+                        "description": "离线人数",
+                        "type": "integer",
+                        "example": 0
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeRoleQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "角色描述",
+                        "type": "string",
+                        "example": "administrator"
+                    },
+                    "is_admin": {
+                        "description": "是否是管理员: 1是 2否",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "description": {
+                        "description": "角色描述",
+                        "type": "string",
+                        "example": "管理员"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeRoleQueryOptionResponse": {
+                "properties": {
+                    "role": {
+                        "description": "角色类型",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeRoleSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeRoleQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeRoleQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeRoleSelectItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "角色名称",
+                        "type": "string",
+                        "example": "admin"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeRoleShowResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "角色名称",
+                        "type": "string",
+                        "example": "超级管理员"
+                    },
+                    "description": {
+                        "description": "角色描述",
+                        "type": "string",
+                        "example": "管理员"
+                    },
+                    "is_admin": {
+                        "description": "是否是管理员: 1是 2否",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "permission_ids": {
+                        "description": "权限ID",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeManagerResponse": {
+                "properties": {
+                    "user_id": {
+                        "description": "用户ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_code": {
+                        "description": "用户code（用于sip账号认证）",
+                        "type": "string",
+                        "example": "10000000001"
+                    },
+                    "tenant_id": {
+                        "description": "公司ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "tenant_name": {
+                        "description": "公司名",
+                        "type": "string",
+                        "example": "携华出行"
+                    },
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "158585899XX"
+                    },
+                    "name": {
+                        "description": "用户名称",
+                        "type": "string",
+                        "example": "小杜"
+                    },
+                    "menu": {
+                        "description": "菜单",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeMenuResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeMenuResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "parent_id": {
+                        "description": "父级ID",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "icon": {
+                        "description": "菜单图标",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "name": {
+                        "description": "菜单名称",
+                        "type": "string",
+                        "example": "系统管理"
+                    },
+                    "path": {
+                        "description": "菜单URL",
+                        "type": "string",
+                        "example": "/systemManagement"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserLogQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "relation_type_txt": {
+                        "description": "操作类型",
+                        "type": "string",
+                        "example": "编辑用户"
+                    },
+                    "operator_name": {
+                        "description": "操作人",
+                        "type": "string",
+                        "example": "法外狂徒"
+                    },
+                    "operator_time": {
+                        "description": "操作时间",
+                        "type": "string",
+                        "example": "2024-01-01 01:01:01"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserLogQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeUserLogQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserPermissionResponse": {
+                "properties": {
+                    "permission_ids": {
+                        "description": "权限IDS",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "description": "状态: 1=开启 2=禁用",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "姓名",
+                        "type": "string",
+                        "example": "张三"
+                    },
+                    "nickname": {
+                        "description": "昵称",
+                        "type": "string",
+                        "example": "法外狂徒"
+                    },
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "13311112222"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserQueryOptionResponse": {
+                "properties": {
+                    "role": {
+                        "description": "角色类型",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeRoleSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeUserQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserSelectItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "姓名",
+                        "type": "string",
+                        "example": "张三"
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserShowResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "姓名",
+                        "type": "string",
+                        "example": "张三"
+                    },
+                    "nickname": {
+                        "description": "昵称",
+                        "type": "string",
+                        "example": "法外狂徒"
+                    },
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string",
+                        "example": "13311112222"
+                    },
+                    "on_hook_status": {
+                        "description": "挂机状态: 1自动示闲 2自动挂起",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "description": "状态: 1启用 2禁用",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "role_ids": {
+                        "description": "角色ID",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    "group_ids": {
+                        "description": "分组ID",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EmployeeUserUpdateOptionResponse": {
+                "properties": {
+                    "group": {
+                        "description": "分组",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeGroupSelectItemResponse"
+                        }
+                    },
+                    "role": {
+                        "description": "角色",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EmployeeRoleSelectItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "VipImportDetailResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据行",
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "blacklist": {
+                        "description": "黑名单数据行",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "blacklist_url": {
+                        "description": "黑名单文件链接",
+                        "type": "string",
+                        "example": ""
+                    }
+                },
+                "type": "object"
+            },
+            "VipImportResponse": {
+                "properties": {
+                    "detail": {
+                        "$ref": "#/components/schemas/VipImportDetailResponse"
+                    },
+                    "status": {
+                        "description": "导入状态: 1=成功 2=失败",
+                        "type": "integer",
+                        "example": 2
+                    }
+                },
+                "type": "object"
+            },
+            "VipImportTemplateResponse": {
+                "properties": {
+                    "url": {
+                        "description": "文件url地址",
+                        "type": "string",
+                        "example": "http://192.168.100.12:8004/data/template/mobile_vip_import.xlsx"
+                    }
+                },
+                "type": "object"
+            },
+            "VipQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "mobile": {
+                        "description": "联系电话",
+                        "type": "string",
+                        "example": "13800001111"
+                    },
+                    "creator_id": {
+                        "description": "操作人Id",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "creator_name": {
+                        "description": "操作人",
+                        "type": "string",
+                        "example": "张三"
+                    },
+                    "first_call_in_time": {
+                        "description": "首次呼入时间",
+                        "type": "string",
+                        "example": "2024-11-01 00:00:00"
+                    },
+                    "last_call_in_time": {
+                        "description": "最后呼入时间",
+                        "type": "string",
+                        "example": "2024-11-01 00:00:00"
+                    },
+                    "created_time": {
+                        "description": "创建时间",
+                        "type": "string",
+                        "example": "2024-11-01 00:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "VipQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VipQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchCallOptionResponse": {
+                "properties": {
+                    "number": {
+                        "description": "通话号码",
+                        "type": "string",
+                        "example": "17521247726"
+                    },
+                    "is_vip": {
+                        "description": "是否是vip 1=是 2=否",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "city": {
+                        "description": "归属地城市",
+                        "type": "string",
+                        "example": "上海"
+                    },
+                    "transfer_number_id": {
+                        "description": "400号码ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "transfer_number_group_name": {
+                        "description": "400号码分组名称",
+                        "type": "string",
+                        "example": "携华出行,桔子出行"
+                    },
+                    "evaluation_invite_type": {
+                        "description": "邀评规则 0=不发起邀评 1=全部邀评 2=坐席发起",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "evaluation_rating_type": {
+                        "description": "评价模式 0=无 1=一级满意度 2=二级满意度",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "hang_up_number": {
+                        "description": "挂机转接分机号 (空字符串时不展示挂机按钮)",
+                        "type": "string",
+                        "example": "8001"
+                    },
+                    "evaluation_hang_up_number": {
+                        "description": "邀评挂机转接分机号 (空字符串时不展示邀评并挂机按钮)",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "ivr_item_id": {
+                        "description": "分流节点ID",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "ivr_item_name": {
+                        "description": "分流节点",
+                        "type": "string",
+                        "example": "投诉问题-发票问题"
+                    },
+                    "uuid": {
+                        "description": "uuid 通话唯一标识",
+                        "type": "string",
+                        "example": "8ef4b7e3-d74d-40d2-9abe-2e3c59fc3bbf"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchInteractQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "客服Id",
+                        "type": "integer"
+                    },
+                    "user_name": {
+                        "description": "客服名称",
+                        "type": "string"
+                    },
+                    "call_trace_id": {
+                        "description": "追踪事件ID",
+                        "type": "integer"
+                    },
+                    "call_trace_status": {
+                        "description": "追踪事件跟进状态: 1=待跟进 2=跟进中 3=已完结",
+                        "type": "integer"
+                    },
+                    "call_trace_name": {
+                        "description": "追踪事件名称",
+                        "type": "string"
+                    },
+                    "content": {
+                        "description": "沟通内容",
+                        "type": "string"
+                    },
+                    "created_time": {
+                        "description": "创建时间",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchInteractQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WorkbenchInteractQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchQueryItemResponse": {
+                "properties": {
+                    "id": {
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "mobile": {
+                        "description": "手机号",
+                        "type": "string"
+                    },
+                    "is_vip": {
+                        "description": "是否是vip 1=是 2=否",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "city": {
+                        "description": "城市",
+                        "type": "string"
+                    },
+                    "call_type": {
+                        "description": "呼叫类型：0=未知 1=呼入 2=呼出",
+                        "type": "integer"
+                    },
+                    "call_status": {
+                        "description": "呼叫状态: 0=未知 1=呼入-400接通 2=呼入-已分配队列 3=呼入-已分配客服 4=呼入-客服已接通",
+                        "type": "integer"
+                    },
+                    "transfer_number_id": {
+                        "description": "400号码ID",
+                        "type": "integer"
+                    },
+                    "transfer_number_group_name": {
+                        "description": "400号码",
+                        "type": "string"
+                    },
+                    "start_stamp": {
+                        "description": "通话开始时间(秒)",
+                        "type": "string"
+                    },
+                    "audio_file_status": {
+                        "description": "语音文件状态：0=无文件 1=上传完成 2=上传中 3=上传失败",
+                        "type": "integer"
+                    },
+                    "audio_file_url": {
+                        "description": "语音文件oss路径",
+                        "type": "string"
+                    },
+                    "ivr_item_id": {
+                        "description": "Ivr分流节点ID",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchQueryResponse": {
+                "properties": {
+                    "total": {
+                        "description": "总数据条数",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "页长",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "current_page": {
+                        "description": "当前页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "最后一页",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "分页数据",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WorkbenchQueryItemResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchReportUserStatusResponse": {
+                "properties": {
+                    "day": {
+                        "description": "日期",
+                        "type": "string",
+                        "example": "2024-12-30"
+                    },
+                    "last_status_at": {
+                        "description": "上次上报时间",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "idle": {
+                        "description": "示闲时长（秒）",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "busy": {
+                        "description": "示忙时长（秒）",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "on_hook": {
+                        "description": "挂起时长（秒）",
+                        "type": "integer",
+                        "example": 0
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchSipInfoResponse": {
+                "properties": {
+                    "user_code": {
+                        "description": "用户code,用于注册Sip服务",
+                        "type": "string",
+                        "example": "10000000003"
+                    },
+                    "ws_host": {
+                        "description": "Sip:WebSocketHost",
+                        "type": "string",
+                        "example": "124.12.12.132"
+                    },
+                    "ws_port": {
+                        "description": "Sip:WebSocketPort",
+                        "type": "string",
+                        "example": "5066"
+                    },
+                    "on_hook_status": {
+                        "description": "挂机状态: 1自动示闲 2自动挂起",
+                        "type": "integer",
+                        "example": 2
+                    }
+                },
+                "type": "object"
+            },
+            "WorkbenchUserStatusStatResponse": {
+                "properties": {
+                    "day": {
+                        "description": "日期",
+                        "type": "string",
+                        "example": "2024-12-30"
+                    },
+                    "idle": {
+                        "description": "示闲时长（秒）",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "busy": {
+                        "description": "示忙时长（秒）",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "on_hook": {
+                        "description": "挂起时长（秒）",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "last_status_at": {
+                        "description": "上次上报时间",
+                        "type": "integer",
+                        "example": 0
+                    }
+                },
+                "type": "object"
+            },
+            "FileUploadRequest": {
+                "required": [
+                    "file"
+                ],
+                "properties": {
+                    "file": {
+                        "description": "文件",
+                        "type": "file",
+                        "format": "binary"
+                    }
+                },
+                "type": "object"
+            },
+            "FileUrlRequest": {
+                "required": [
+                    "path"
+                ],
+                "properties": {
+                    "path": {
+                        "description": "文本文件oss路径",
+                        "type": "string",
+                        "example": "call-center/upload/3/eaf330d7ba5a3aedce86c9554aed4ca5.txt"
+                    }
+                },
+                "type": "object"
+            },
+            "FileUploadResponse": {
+                "properties": {
+                    "url": {
+                        "description": "附件URL地址",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "原始文件名",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "FileUrlResponse": {
+                "properties": {
+                    "url": {
+                        "description": "附件URL地址",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "OptionResponse": {
+                "properties": {
+                    "name": {
+                        "description": "名称",
+                        "type": "string",
+                        "example": "name"
+                    },
+                    "val": {
+                        "description": "值",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "文件管理",
+            "description": "文件管理"
+        }
+    ]
+}
