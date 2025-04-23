@@ -6,6 +6,9 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 # install composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 ## apt-get install autoconf && apt-get update && pecl channel-update pecl.php.net 用于解决redis安装不成功
 ## update apt-get
 RUN apt-get install autoconf && \
@@ -31,3 +34,4 @@ RUN pecl install redis && docker-php-ext-enable redis
 
 ## enable rewrite module
 RUN ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/rewrite.load
+

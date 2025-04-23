@@ -34,7 +34,7 @@ final class CreateGamesTable extends AbstractMigration
             ->addColumn(Column::string('capsule_image', 512)->setNull(false)->setDefault('')->setComment('列表缩略图'))
             ->addColumn(Column::text('description')->setNull(true)->setComment('游戏详细描述'))
             ->addColumn(Column::text('short_description')->setNull(true)->setComment('简短描述'))
-            ->addColumn(Column::unsignedTinyInteger('coming_soon')->setNull(true)->setComment('发布状态: 1=已发布 2=未发布'))
+            ->addColumn(Column::unsignedTinyInteger('coming_soon')->setNull(false)->setDefault(0)->setComment('发布状态: 1=未发布 2=已发布'))
             ->addColumn(Column::date('release_date')->setNull(true)->setComment('原始发布日期'))
             ->addColumn(Column::unsignedTinyInteger('is_free')->setNull(false)->setDefault(0)->setComment('是否免费：0=未知 1=是 2=否'))
             ->addColumn(Column::tinyInteger('age_rating')->setNull(false)->setDefault(0)->setComment('年龄限制（如 PEGI 18+）'))

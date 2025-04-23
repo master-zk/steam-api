@@ -24,5 +24,6 @@ class Table
     const GAME_OS_REQUIREMENTS = 'game_os_requirements';
 
     const GAME_STAT = 'game_stat';
+    const GAME_SCORE_ITEM_LOG = 'game_score_item_log';
 
 }

@@ -7,19 +7,20 @@
     "require": {
         "php": "^8.2",
         "ext-curl": "*",
+        "ext-dom": "*",
         "ext-fileinfo": "*",
         "ext-gd": "*",
-        "ext-pdo": "*",
+        "ext-libxml": "*",
         "ext-openssl": "*",
+        "ext-pcntl": "*",
+        "ext-pdo": "*",
+        "ext-posix": "*",
         "ext-redis": "*",
         "ext-sodium": "*",
+        "ext-zip": "*",
         "alibabacloud/aliyun-log-php-sdk": "~0.6.3",
         "jenny-php/kernel": "^1.0",
-        "ext-pcntl": "*",
-        "ext-posix": "*",
-        "ext-dom": "*",
-        "ext-libxml": "*",
-        "ext-zip": "*"
+        "symfony/process": "^6.4"
     },
     "require-dev": {
         "laravel/pint": "1.16.1",
