@@ -6,17 +6,14 @@ namespace app\console\commands;
 
 use app\api\visitor\enum\MediaTypeEnum;
 use app\api\visitor\input\GameInput;
-use app\api\visitor\services\CategoryService;
-use app\api\visitor\services\CommonService;
-use app\api\visitor\services\GameService;
 use app\bundles\game\scheduler\GetSteamGameInfoTask;
+use app\bundles\game\services\CategoryService;
+use app\bundles\game\services\GameService;
 use app\const\Table;
 use Flame\Support\Facade\DB;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use think\db\Where;
-use function MongoDB\BSON\fromJSON;
 
 class HelloCommand extends Command
 {

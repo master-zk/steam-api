@@ -1,10 +1,14 @@
 <?php
 
-namespace app\api\visitor\services;
+namespace app\bundles\game\services;
 
 use app\api\visitor\input\GameInput;
+use app\bundles\manage\enums\CallLogStatCallTypeEnum;
+use app\bundles\manage\enums\CallLogStatRelationTypeEnum;
+use app\bundles\manage\enums\CallLogStatTimeTypeEnum;
 use app\const\Table;
 use Flame\Support\Facade\DB;
+use think\db\Query;
 
 class GameService
 {
@@ -142,6 +146,112 @@ class GameService
         }
 
         return $dbId;
+    }
+
+    public function query(array $cond, int $page, int $pageSize): array
+    {
+        // 列表
+        $query = $this->generateQuery($cond);
+        $rows = $query
+            ->order('a.id', 'asc')
+            ->paginate([
+                'page' => $page,
+                'list_rows' => $pageSize,
+            ])->toArray();
+        /*if (count($rows['data']) > 0) {
+            $gameIds = array_column($rows['data'], 'id');
+            $gameCategory = DB::table(Table::GAME_CATEGORY_RELATION)
+                ->where('game_id', 'in', $gameIds)
+                ->field([
+                    'game_id',
+                    'category_id',
+                ])
+                ->select()
+                ->toArray();
+            $categoryIds = [];
+            $gameCategoryKey = [];
+            foreach ($gameCategory as $v) {
+                $gameCategoryKey[$v['game_id']][] = $v['category_id'];
+                $categoryIds[$v['category_id']] = 1;
+            }
+            //dd($gameCategoryKey);
+            $categoryIds = array_keys($categoryIds);
+            $categoryMap = DB::table(Table::CATEGORIES)
+                ->where('id', 'in', $categoryIds)
+                ->column('name', 'id');
+            foreach ($rows['data'] as &$row) {
+                $row['categories'] = [];
+                if (!empty($gameCategoryKey[$row['id']])) {
+                    foreach ($gameCategoryKey[$row['id']] as $v) {
+                        if (isset($categoryMap[$v])) {
+                            $row['categories'][] = [
+                                'id' => $v,
+                                'name' => $categoryMap[$v],
+                            ];
+                        }
+                    }
+                }
+            }
+            unset($row);
+        }*/
+
+        return $rows;
+    }
+
+    public function top(string $type, $limit = 20): array
+    {
+        // 列表
+        $gameIds = [1,2,3,4,5,6,7];
+        $cond = [
+            'id' => $gameIds,
+        ];
+        $query = $this->generateQuery($cond);
+        $rows = $query
+            ->order('a.id', 'asc')
+            ->limit($limit)
+            ->select()->toArray();
+
+        $ret = [];
+        $rowMap = array_column($rows, 'id');
+        foreach ($gameIds as $gameId) {
+            if (isset($rowMap[$gameId])) {
+                $ret[] = $rowMap[$gameId];
+            }
+        }
+
+        return $ret;
+    }
+
+    public function generateQuery(array $cond, $fields = []): Query
+    {
+        $fields = $fields ?: [
+            'a.id',
+            'a.title',
+            'a.capsule_image',
+            'a.short_description',
+        ];
+        $query = DB::table(Table::GAMES)->alias('a')
+            ->field($fields)
+            ->whereNull('a.deleted_time');
+
+        if (!empty($cond['id'])) {
+            if (is_array($cond['id'])) {
+                $query->whereIn('a.id', $cond['id']);
+            } else {
+                $query->where('a.id', '=', $cond['platform_id']);
+
+            }
+        }
+        if (!empty($cond['platform_id'])) {
+            $query->where('a.platform_id', '=', $cond['platform_id']);
+        }
+        if (!empty($cond['category_ids'])) {
+            $query->where('a.id', 'in', function ($q) use ($cond) {
+                $q->table(Table::GAME_CATEGORY_RELATION)->where('category_id', 'in', $cond['category_ids'])->field('game_id');
+            });
+        }
+
+        return $query;
     }
 
 }

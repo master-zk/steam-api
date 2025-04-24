@@ -26,4 +26,6 @@ class Table
     const GAME_STAT = 'game_stat';
     const GAME_SCORE_ITEM_LOG = 'game_score_item_log';
 
+    const MENU = 'menu';
+
 }

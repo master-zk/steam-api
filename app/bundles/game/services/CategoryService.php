@@ -1,13 +1,13 @@
 <?php
 
-namespace app\api\visitor\services;
+namespace app\bundles\game\services;
 
 use app\const\Table;
 use Flame\Support\Facade\DB;
 
 class CategoryService
 {
-    public function getList(): array
+    public function getSelect(): array
     {
         return DB::table('categories')
             ->field([

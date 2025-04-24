@@ -1,10 +1,10 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "JennySteamAPI文档",
-        "description": "提供员工运营管理工具",
+        "title": "携华客服API文档",
+        "description": "公共接口",
         "contact": {
-            "name": "Develop Jenny"
+            "name": "XH Develop Team"
         },
         "version": "1.0"
     },
@@ -14,6 +14,115 @@
             "description": "开发环境"
         }
     ],
+    "paths": {
+        "/api/game/visitor/category/select": {
+            "get": {
+                "tags": [
+                    "分类"
+                ],
+                "summary": "游戏分类",
+                "operationId": "fb467da53563e43ae72666580ece733e",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OptionResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/game/visitor/game/query": {
+            "post": {
+                "tags": [
+                    "游戏"
+                ],
+                "summary": "游戏列表",
+                "operationId": "ebba890697df71761c1a89ad46583640",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "页标",
+                        "required": true,
+                        "example": 1
+                    },
+                    {
+                        "name": "page_size",
+                        "in": "query",
+                        "description": "页长",
+                        "required": true,
+                        "example": 10
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GameVisitorGameQueryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GameVisitorGameQueryResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/game/visitor/index/menu": {
+            "get": {
+                "tags": [
+                    "首页"
+                ],
+                "summary": "菜单",
+                "operationId": "b13d08f39d14d56f900f498c2185e0c0",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexMenuResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
     "components": {
         "schemas": {
             "GameVisitorGameQueryRequest": {
@@ -208,16 +317,20 @@
                 },
                 "type": "object"
             }
-        },
-        "securitySchemes": {
-            "bearerAuth": {
-                "type": "http",
-                "description": "JWT 认证信息",
-                "name": "Authorization",
-                "in": "header",
-                "bearerFormat": "JWT",
-                "scheme": "bearer"
-            }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "分类",
+            "description": "分类"
+        },
+        {
+            "name": "游戏",
+            "description": "游戏"
+        },
+        {
+            "name": "首页",
+            "description": "首页"
+        }
+    ]
 }

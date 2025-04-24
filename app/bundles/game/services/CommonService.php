@@ -1,6 +1,6 @@
 <?php
 
-namespace app\api\visitor\services;
+namespace app\bundles\game\services;
 
 use Flame\Support\Facade\Log;
 use GuzzleHttp\Client;
