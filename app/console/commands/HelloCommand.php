@@ -6,9 +6,11 @@ namespace app\console\commands;
 
 use app\api\visitor\enum\MediaTypeEnum;
 use app\api\visitor\input\GameInput;
+use app\bundles\game\jobs\GetSteamGameInfoJob;
 use app\bundles\game\scheduler\GetSteamGameInfoTask;
 use app\bundles\game\services\CategoryService;
 use app\bundles\game\services\GameService;
+use app\bundles\game\services\SteamGameService;
 use app\const\Table;
 use Flame\Support\Facade\DB;
 use Symfony\Component\Console\Command\Command;
@@ -33,10 +35,14 @@ class HelloCommand extends Command
         echo 'hello world' . PHP_EOL;
         $beginMic = microtime(true);
         //$maxProcesses = $maxProcesses ?? max(1, (int) shell_exec('nproc') ?? 4);
-        $this->testGameList();
-
+        // $this->testGameList();
+        /*$this->parseTodayPlayerTopHtml(runtime_path("steam/top/today_player.html"));
+        $this->parseTodayPlayerTopHtml(runtime_path("steam/top/all_player.html"));
+        $this->parseTodayPlayerTopHtml(runtime_path("steam/top/all_seller.html"));
+        $this->parseTodayPlayerTopHtml(runtime_path("steam/top/cn_seller.html"));*/
 
         //$this->testGameInfo();
+        $this->setGameReviewData();
 
 
         $endMic = microtime(true);
@@ -319,6 +325,87 @@ class HelloCommand extends Command
                 }
             }
 
+        }
+    }
+
+    public function parseTodayPlayerTopHtml($file, $download = true): void
+    {
+        dump('file_exists:' . file_exists($file));
+        $html = file_get_contents($file);
+        libxml_use_internal_errors(true);
+        $dom = new \DOMDocument();
+        $dom->loadHTML($html);
+        libxml_clear_errors();
+        $domXpath = new \DOMXPath($dom);
+        $query = '//tbody//a[@class="_2C5PJOUH6RqyuBNEwaCE9X"]/@href';
+        $hrefs = $domXpath->query($query);
+
+        // 遍历结果
+        foreach ($hrefs as $href) {
+            $url = $href->nodeValue;
+            $appid = $this->extractAppIdFromUrl($url);
+            if (!empty($appid)) {
+                $appid = (string)$appid;
+                dump("开始执行下载： {$appid}");
+                (new GetSteamGameInfoJob)->loadGameByAppId($appid);
+            }
+        }
+    }
+
+    public function extractAppIdFromUrl($url): ?string
+    {
+        // 解析 URL 获取路径部分
+        $path = parse_url($url, PHP_URL_PATH);
+
+        // 使用正则表达式匹配数字部分
+        if (preg_match('/\/app\/(\d+)/', $path, $matches)) {
+            return $matches[1];
+        }
+
+        return null; // 如果没有匹配到数字，返回 null
+    }
+
+    public function setGameReviewData()
+    {
+        $indexId = 0;
+        $today = date('Y-m-d 00:00:00');
+        while (true) {
+            $game = DB::table(Table::GAMES)
+                ->where('id', '>', $indexId)
+                ->order('id', 'asc')
+                ->findOrEmpty();
+            if (empty($game)) {
+                dump('end');
+                break;
+            }
+            $indexId = intval($game['id']);
+            dump("{$indexId} : {$game['external_id']}");
+
+            if ($game['review_date'] && $game['review_date'] == $today) {
+                continue;
+            }
+            try {
+                $this->setGameReviewDataSingleHandle((string)$game['external_id']);
+            } catch (\Throwable $e) {
+                dump($e);
+            }
+        }
+    }
+    private function setGameReviewDataSingleHandle($appId): void
+    {
+        $service = new SteamGameService();
+        $reviews = $service->getGameReview($appId);
+        $today = date('Y-m-d 00:00:00');
+        if (! empty($reviews)) {
+            DB::table(Table::GAMES)
+                ->where('platform_id', $service->platformId)
+                ->where('external_id', $appId)
+                ->update([
+                    'review_positive' => intval($reviews['total_positive']),
+                    'review_negative' => intval($reviews['total_negative']),
+                    'review_total' => intval($reviews['total_reviews']),
+                    'review_date' => $today,
+                ]);
         }
     }
 }

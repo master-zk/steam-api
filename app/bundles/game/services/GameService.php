@@ -2,11 +2,14 @@
 
 namespace app\bundles\game\services;
 
+use app\api\visitor\enum\MediaTypeEnum;
 use app\api\visitor\input\GameInput;
+use app\bundles\game\jobs\GetSteamGameInfoJob;
 use app\bundles\manage\enums\CallLogStatCallTypeEnum;
 use app\bundles\manage\enums\CallLogStatRelationTypeEnum;
 use app\bundles\manage\enums\CallLogStatTimeTypeEnum;
 use app\const\Table;
+use app\exception\CustomException;
 use Flame\Support\Facade\DB;
 use think\db\Query;
 
@@ -16,7 +19,7 @@ class GameService
     {
         $commonService = new CommonService();
         if (!$commonService->containsCnStr($row->title)) {
-            $cnName = $commonService->transStrSingle($row->title);
+            $cnName = $commonService->transStrSingle($row->title, '');
             if ($cnName) {
                 $row->title = $cnName;
             }
@@ -201,7 +204,10 @@ class GameService
     public function top(string $type, $limit = 20): array
     {
         // 列表
-        $gameIds = [1,2,3,4,5,6,7];
+        $gameIds = $this->getTopGameIds($type);
+        if (count($gameIds) > 20) {
+            $gameIds = array_slice($gameIds, 0, 20);
+        }
         $cond = [
             'id' => $gameIds,
         ];
@@ -212,7 +218,7 @@ class GameService
             ->select()->toArray();
 
         $ret = [];
-        $rowMap = array_column($rows, 'id');
+        $rowMap = array_column($rows, null, 'id');
         foreach ($gameIds as $gameId) {
             if (isset($rowMap[$gameId])) {
                 $ret[] = $rowMap[$gameId];
@@ -221,6 +227,27 @@ class GameService
 
         return $ret;
     }
+
+    protected function getTopGameIds(int $type): array
+    {
+        switch ($type) {
+            case 1:
+                $file = runtime_path('steam/top/today_player.html');
+                break;
+            case 2:
+                $file = runtime_path('steam/top/cn_seller.html');
+                break;
+            case 3:
+                $file = runtime_path('steam/top/all_seller.html');
+                break;
+            default:
+                $file = runtime_path('steam/top/all_player.html');
+                break;
+        }
+
+        return $this->parseTodayPlayerTopHtml($file);
+    }
+
 
     public function generateQuery(array $cond, $fields = []): Query
     {
@@ -245,6 +272,9 @@ class GameService
         if (!empty($cond['platform_id'])) {
             $query->where('a.platform_id', '=', $cond['platform_id']);
         }
+        if (!empty($cond['keyword'])) {
+            $query->where('a.title', 'like', "%{$cond['keyword']}%");
+        }
         if (!empty($cond['category_ids'])) {
             $query->where('a.id', 'in', function ($q) use ($cond) {
                 $q->table(Table::GAME_CATEGORY_RELATION)->where('category_id', 'in', $cond['category_ids'])->field('game_id');
@@ -252,6 +282,120 @@ class GameService
         }
 
         return $query;
+    }
+
+    public function detail($id)
+    {
+        $game = DB::table(Table::GAMES)
+            ->where('id', $id)
+            ->field([
+                'id',
+                'external_id',
+                'title',
+                'capsule_image',
+                'description',
+                'short_description',
+                'coming_soon',
+                'release_date',
+                'is_free',
+                'age_rating',
+                'website_url',
+                'os_windows',
+                'os_mac',
+                'os_linux',
+                'review_positive',
+                'review_negative',
+            ])
+            ->findOrEmpty();
+        if (empty($game)) {
+            not_found_exception();
+        }
+
+        $screenshots = DB::table(Table::GAME_MEDIA)
+            ->where('game_id', '=', $id)
+            ->where('media_type', '=', MediaTypeEnum::IMAGE->value)
+            ->where('media_label', '=', 'screenshots')
+            ->order('sort_order', 'asc')
+            ->column('media_thumbnail');
+
+        $categories = DB::table(Table::GAME_CATEGORY_RELATION)->alias('a')
+            ->leftJoin(Table::CATEGORIES . ' b', 'b.id=a.category_id')
+            ->where('a.game_id', '=', $id)
+            ->column('b.name');
+        $price = DB::table(Table::GAME_PRICE)
+            ->where('game_id', '=', $id)
+            ->field([
+                'price_symbol',
+                'price_initial',
+                'price_final',
+                'discount',
+            ])
+            ->findOrEmpty();
+
+        $game['screenshots'] = $screenshots;
+        $game['price_overview'] = $price;
+        $game['category'] = $categories;
+        $game['chart'] = $this->getGameHistoryScore(31);
+
+        return $game;
+    }
+
+    public function getGameHistoryScore($day = 31): array
+    {
+        $ret  = [];
+        $beginTime = strtotime("-{$day} day");
+        for ($i = 0; $i < $day; $i++) {
+            $indexTime = $beginTime + $i * 86400;
+            $ret[] = [
+                'timestamp' => $beginTime,
+                'date' => date('Y-m-d', $indexTime),
+                'score' => rand(75, 95) + round(rand(0, 10) / 10, 2),
+            ];
+        }
+
+        return $ret;
+    }
+
+    public function parseTodayPlayerTopHtml($file): array
+    {
+        $html = file_get_contents($file);
+        libxml_use_internal_errors(true);
+        $dom = new \DOMDocument();
+        $dom->loadHTML($html);
+        libxml_clear_errors();
+        $domXpath = new \DOMXPath($dom);
+        $query = '//tbody//a[@class="_2C5PJOUH6RqyuBNEwaCE9X"]/@href';
+        $hrefs = $domXpath->query($query);
+
+        $gameIds = [];
+        // 遍历结果
+        foreach ($hrefs as $href) {
+            $url = $href->nodeValue;
+            $appid = $this->extractAppIdFromUrl($url);
+            if (!empty($appid)) {
+                $gameId = DB::table(Table::GAMES)
+                    ->where('external_id', '=', $appid)
+                    ->value('id');
+                if ($gameId) {
+                    $gameIds[] = $gameId;
+                }
+            }
+        }
+
+        return $gameIds;
+    }
+
+    public function extractAppIdFromUrl($url): ?string
+    {
+        // 解析 URL 获取路径部分
+        $path = parse_url($url, PHP_URL_PATH);
+
+        // 使用正则表达式匹配数字部分
+        if (preg_match('/\/app\/(\d+)/', $path, $matches)) {
+            return $matches[1];
+        }
+
+        return null; // 如果没有匹配到数字，返回 null
     }
 
 }

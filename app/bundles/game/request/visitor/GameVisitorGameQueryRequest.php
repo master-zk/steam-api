@@ -15,6 +15,7 @@ use OpenApi\Attributes as OA;
 class GameVisitorGameQueryRequest extends Validator
 {
     protected array $rule = [
+        'keyword' => 'max:30',
         'category_ids' => 'numberArray',
     ];
 

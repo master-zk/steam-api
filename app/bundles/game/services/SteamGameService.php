@@ -18,7 +18,7 @@ class SteamGameService
 
     public function getGameDetail(string $appid, string $lang = 'cn', string $cc = "cn", bool $includeDlc = false, int $dlcLimit = 10): array
     {
-        dump(__METHOD__ . ' : ' . $appid . ' : ' . $lang);
+        dump("getGameDetail : {$appid} : $cc - $lang)");
         $lang_arr = ['cn' => 'zh-cn;zh',];
         $params = [
             'query' => [
@@ -269,5 +269,38 @@ class SteamGameService
             'Content-Type' => 'application/json',
             'Cookie' => 'browserid=344068855326449478;',
         ];
+    }
+
+    public function getGameReview(string $appId, $dayRange = 30)
+    {
+        $params = [
+            'query' => [
+                'json' => 1,
+                'filter' => 'recent',
+                'day_range' => $dayRange,
+            ],
+            'timeout' => 5,
+            'headers' => $this->getCommonHeader(),
+        ];
+
+        $ret = [];
+        $url = "https://store.steampowered.com/appreviews/{$appId}";
+        try {
+            $response = $this->getClient()->get($url, $params);
+            usleep(rand(300, 500)); // 简单等待
+
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody()->getContents(), true);
+            }
+
+            $success = $data['success'] ?? false;
+            if ($success) {
+                $ret = $data['query_summary'] ?? [];
+            }
+        } catch (\Throwable $e) {
+            dump($e->getMessage());
+        }
+
+        return $ret;
     }
 }

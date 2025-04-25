@@ -19,60 +19,78 @@ class GetSteamGameInfoJob implements JobInterface
         dump($appIds);
         foreach ($appIds as $v) {
             $appid = (string)$v;
-            dump($appid);
-            $oldRow = DB::table(Table::GAME_RAW)
-                ->field(['id', 'load_run_status'])
-                ->where('platform_id', $service->platformId)
-                ->where('external_id', $appid)
-                ->findOrEmpty();
-            $down = false;
-            $downType = '';
-            $oldRowId = 0;
+            $this->loadGameByAppId($appid);
+        }
+    }
 
-            if (empty($oldRow)) {
-                $down = true;
-                $downType = 'create';
-            } elseif ($oldRow['load_run_status'] == 4) {
-                $down = true;
-                $downType = 'update';
-                $oldRowId = $oldRow['id'];
+    public function loadGameByAppId($appid): void
+    {
+        $service = new SteamGameService();
+        dump($appid);
+        $oldRow = DB::table(Table::GAME_RAW)
+            ->field(['id', 'load_run_status'])
+            ->where('platform_id', $service->platformId)
+            ->where('external_id', $appid)
+            ->findOrEmpty();
+        $down = false;
+        $downType = '';
+        $oldRowId = 0;
+
+        if (empty($oldRow)) {
+            $down = true;
+            $downType = 'create';
+        } elseif ($oldRow['load_run_status'] == 4) {
+            $down = true;
+            $downType = 'update';
+            $oldRowId = $oldRow['id'];
+        }
+
+        if ($down) {
+            $detail = $this->downGameDetail($appid);
+            sleep(1);
+            if (isset($detail[$appid]['success']) && isset($detail[$appid]['data']) && $detail[$appid]['success'] && $detail[$appid]['data']) {
+                $gameData = $detail[$appid]['data'];
+                $gameType = $gameData['type'] ?? null;
+                if ($gameType != 'game') {
+                    dump('非游戏数据');
+                    return;
+                }
+                $insertData = [
+                    'platform_id' => $service->platformId,
+                    'external_id' => $appid,
+                    'last_detail' => serialize($gameData),
+                    'detail' => serialize($gameData),
+                    'load_time' => date('Y-m-d H:i:s'),
+                    'load_run_status' => RunStatusEnum::SUCCESS->value,
+                    'sync_run_status' => RunStatusEnum::WAITING->value,
+                ];
+            } else {
+                dump('无法获取游戏数据');
+                $insertData = [
+                    'platform_id' => $service->platformId,
+                    'external_id' => $appid,
+                    'load_time' => date('Y-m-d H:i:s'),
+                    'load_run_status' => RunStatusEnum::FAIL->value,
+                ];
             }
 
-            if ($down) {
-                $detail = $service->getGameDetail($appid, 'cn', 'cn', false);
-                sleep(1);
-                if (isset($detail[$appid]['success']) && isset($detail[$appid]['data']) && $detail[$appid]['success'] && $detail[$appid]['data']) {
-                    $gameData = $detail[$appid]['data'];
-                    $gameType = $gameData['type'] ?? null;
-                    if ($gameType != 'game') {
-                        dump('非游戏数据');
-                        continue;
-                    }
-                    $insertData = [
-                        'platform_id' => $service->platformId,
-                        'external_id' => $appid,
-                        'last_detail' => serialize($gameData),
-                        'detail' => serialize($gameData),
-                        'load_time' => date('Y-m-d H:i:s'),
-                        'load_run_status' => RunStatusEnum::SUCCESS->value,
-                        'sync_run_status' => RunStatusEnum::WAITING->value,
-                    ];
-                } else {
-                    dump('无法获取游戏数据');
-                    $insertData = [
-                        'platform_id' => $service->platformId,
-                        'external_id' => $appid,
-                        'load_time' => date('Y-m-d H:i:s'),
-                        'load_run_status' => RunStatusEnum::FAIL->value,
-                    ];
-                }
-
-                if ($downType == 'create') {
-                    DB::table(Table::GAME_RAW)->insert($insertData);
-                } elseif ($downType == 'update' && !empty($insertData['detail'])) {
-                    DB::table(Table::GAME_RAW)->where('id', $oldRowId)->update($insertData);
-                }
+            if ($downType == 'create') {
+                DB::table(Table::GAME_RAW)->insert($insertData);
+            } elseif ($downType == 'update' && !empty($insertData['detail'])) {
+                DB::table(Table::GAME_RAW)->where('id', $oldRowId)->update($insertData);
             }
         }
+    }
+
+    public function downGameDetail($appid): mixed
+    {
+        $service = new SteamGameService();
+        $detail = $service->getGameDetail($appid, 'cn', 'cn', false);
+        sleep(1);
+        if (!(isset($detail[$appid]['success']) && isset($detail[$appid]['data']) && $detail[$appid]['success'] && $detail[$appid]['data'])) {
+            $detail = $service->getGameDetail($appid, 'cn', 'en', false);
+        }
+
+        return $detail;
     }
 }

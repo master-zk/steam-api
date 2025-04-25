@@ -168,6 +168,77 @@
                 },
                 "type": "object"
             },
+            "GameVisitorGameDetailResponse": {
+                "properties": {
+                    "id": {
+                        "description": "游戏ID",
+                        "type": "integer"
+                    },
+                    "title": {
+                        "description": "游戏标题",
+                        "type": "string"
+                    },
+                    "short_description": {
+                        "description": "简短描述",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "描述",
+                        "type": "string"
+                    },
+                    "coming_soon": {
+                        "description": "发布状态: 1=未发布 2=已发布",
+                        "type": "1"
+                    },
+                    "release_date": {
+                        "description": "发布日期（未发布时无）",
+                        "type": "string",
+                        "example": "2017-09-15"
+                    },
+                    "is_free": {
+                        "description": "是否免费： 1=是 2=否",
+                        "type": "integer"
+                    },
+                    "age_rating": {
+                        "description": "年龄限制（如 PEGI 18+）",
+                        "type": "integer"
+                    },
+                    "website_url": {
+                        "description": "游戏官网URL",
+                        "type": "string"
+                    },
+                    "os_windows": {
+                        "description": "是否支持windows：0=未知 1=是 2=否",
+                        "type": "integer"
+                    },
+                    "os_mac": {
+                        "description": "是否支持mac：0=未知 1=是 2=否",
+                        "type": "integer"
+                    },
+                    "os_linux": {
+                        "description": "是否支持linux：0=未知 1=是 2=否",
+                        "type": "integer"
+                    },
+                    "review_positive": {
+                        "description": "评测：好评",
+                        "type": "integer",
+                        "example": 57565
+                    },
+                    "review_negative": {
+                        "description": "评测：差评",
+                        "type": "integer",
+                        "example": 3551
+                    },
+                    "chart": {
+                        "description": "历史评分",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ChartOptionResponse"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "GameVisitorGameQueryResponse": {
                 "properties": {
                     "total": {
@@ -299,6 +370,21 @@
                     "url": {
                         "description": "附件URL地址",
                         "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ChartOptionResponse": {
+                "properties": {
+                    "x": {
+                        "description": "横坐标数据",
+                        "type": "string",
+                        "example": "2025-01-23"
+                    },
+                    "y": {
+                        "description": "纵坐标数据0",
+                        "type": "number",
+                        "example": 1.1
                     }
                 },
                 "type": "object"
